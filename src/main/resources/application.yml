@@ -1,2 +1,5 @@
 pf:
   jwt:
+    secretKey: secretKey
+    algorithm: ''
+    validityMinutes: 4320
