@@ -1,0 +1,140 @@
+
+
+plugins {
+    id 'java'
+    id 'signing'
+    id 'maven-publish'
+    id "com.jfrog.bintray" version "1.8.5"
+}
+
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url "https://dl.bintray.com/hmtmcse/maven/" }
+    maven { url "https://dl.bintray.com/problemfighter/java/" }
+}
+
+
+group = 'com.problemfighter.pfspring.jwt'
+version = '1.0.0'
+
+
+def dependencyList = []
+
+dependencies {
+    dependencyList.each {
+        if (findProject(":" + it)){
+            implementation project(":" + it)
+        }
+    }
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'com.auth0:java-jwt:3.12.0'
+}
+
+bootJar { enabled = false }
+jar { enabled = true }
+
+javadoc {
+    source = sourceSets.main.allJava
+    classpath = configurations.compile
+    options.addBooleanOption('html5', true)
+}
+
+task makeDoc {
+    dependsOn(javadoc)
+    doLast {
+        def docDirectory = file("docs")
+        if (!docDirectory.exists()){
+            docDirectory.mkdirs();
+        }
+        delete "docs/javadoc"
+        copy{
+            from "$buildDir/docs/javadoc"
+            into 'docs/javadoc'
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = 'sources'
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    archiveClassifier = 'javadoc'
+}
+
+
+Boolean isPublish = true
+if (isPublish) {
+    bintray {
+
+        user = (project.hasProperty('bintrayUser') ? project.property('bintrayUser') : "hmtmcse" )
+        key =  (project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : "123" )
+        publish = true
+        override = true
+        publications = ['mavenJava']
+        pkg {
+            repo = 'java'
+            name = 'com.problemfighter.pfspring.jwt'
+            desc = 'Problem Fighter Spring Boot JWT'
+            vcsUrl = 'https://github.com/problemfighter/pfspring-jwt.git'
+            websiteUrl = 'https://github.com/problemfighter/pfspring-jwt'
+            issueTrackerUrl = 'https://github.com/problemfighter/pfspring-jwt/issues'
+            licenses = ['Apache-2.0']
+        }
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifactId = 'pfspring-jwt'
+                groupId = 'com.problemfighter.pfspring.jwt'
+                from components.java
+                artifact sourcesJar
+//                artifact javadocJar
+                versionMapping {
+                    usage('java-api') {
+                        fromResolutionOf('runtimeClasspath')
+                    }
+                    usage('java-runtime') {
+                        fromResolutionResult()
+                    }
+                }
+                pom {
+                    name = 'Problem Fighter Spring Boot JWT'
+                    description = 'Problem Fighter Spring Boot JWT'
+                    url = 'http://www.hmtmcse.com/opensource/pfspring/jwt'
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'hmtmcse'
+                            name = 'H.M Touhid Mia'
+                            email = 'hmtm.cse@gmail.com'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:https://github.com/problemfighter/pfspring-jwt.git'
+                        developerConnection = 'scm:git:https://github.com/problemfighter/pfspring-jwt.git'
+                        url = 'https://github.com/problemfighter/pfspring-jwt'
+                    }
+                }
+            }
+        }
+    }
+
+    signing {
+        sign publishing.publications.mavenJava
+    }
+}
+
