@@ -1,5 +1,5 @@
 pf:
   jwt:
     secretKey: secretKey
-    algorithm: ''
+    algorithm: 'HMAC256'
     validityMinutes: 4320
