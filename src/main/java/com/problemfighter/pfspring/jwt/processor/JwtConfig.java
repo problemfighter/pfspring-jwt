@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("pf.jwt")
 public class JwtConfig {
 
-    public String secretKey;
+    public String secretKey = "ProblemFighterSpringBootJWT";
     public String algorithm = "HMAC256";
     public Integer validityMinutes = 4321;
 
