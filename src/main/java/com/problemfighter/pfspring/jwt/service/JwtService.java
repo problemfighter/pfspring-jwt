@@ -20,6 +20,9 @@ public class JwtService {
         this.jwtProcessor = new JwtProcessor(this.jwtConfig.secretKey, this.jwtConfig.algorithm).setExpiration(this.jwtConfig.validityMinutes);
     }
 
+    public JwtProcessor getJwtProcessor() {
+        return this.jwtProcessor;
+    }
 
     public String getToken(String issuer) {
         iJwtCallback.onCreate(jwtProcessor);
