@@ -1,12 +1,12 @@
 package com.problemfighter.pfspring.jwt.service;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.problemfighter.pfspring.jwt.model.data.JwtValidationResponse;
 import com.problemfighter.pfspring.jwt.processor.JWTException;
 import com.problemfighter.pfspring.jwt.processor.JwtConfig;
 import com.problemfighter.pfspring.jwt.processor.JwtProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.Map;
 
 @Service
@@ -15,7 +15,7 @@ public class JwtService {
     private final IJwtCallback iJwtCallback;
     private final JwtConfig jwtConfig;
     private final JwtProcessor jwtProcessor;
-    private final String vKey = "vKey";
+    public final String vKey = "vKey";
 
     @Autowired
     public JwtService(IJwtCallback iJwtCallback, JwtConfig jwtConfig) {
@@ -62,23 +62,23 @@ public class JwtService {
         return this.jwtProcessor.getToken();
     }
 
-    private DecodedJWT validateAccessRefreshToken(String token, String message, String pVKey) {
+    private JwtValidationResponse validateAccessRefreshToken(String token, String message, String pVKey) {
         DecodedJWT decodedJWT = validate(token);
         if (decodedJWT == null) {
             throw new JWTException(message);
-        } else if (decodedJWT.getClaim(vKey) == null || !decodedJWT.getClaim(vKey).equals(pVKey)) {
+        } else if (decodedJWT.getClaim(vKey) == null || !decodedJWT.getClaim(vKey).asString().equals(pVKey)) {
             throw new JWTException(message);
         }
-        return decodedJWT;
+        return JwtValidationResponse.instance().set(decodedJWT);
     }
 
-    public DecodedJWT validateRefreshToken(String token) {
+    public JwtValidationResponse validateRefreshToken(String token) {
         iJwtCallback.refreshTokenPreValidate(this);
         String message = "Invalid Refresh Token";
         return validateAccessRefreshToken(token, message, jwtConfig.refreshTokenKey);
     }
 
-    public DecodedJWT validateAccessToken(String token) {
+    public JwtValidationResponse validateAccessToken(String token) {
         iJwtCallback.preValidate(this);
         String message = "Invalid Access Token";
         return validateAccessRefreshToken(token, message, jwtConfig.accessTokenKey);
