@@ -76,7 +76,6 @@ public class JwtProcessor {
             JWTVerifier verifier = verification.build(new JwtCustomClock());
             return verifier.verify(token);
         } catch (JWTCreationException exception) {
-            exception.printStackTrace();
             throw new JWTException(exception.getMessage());
         }
     }

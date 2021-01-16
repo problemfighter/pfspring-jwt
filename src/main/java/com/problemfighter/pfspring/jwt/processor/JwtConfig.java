@@ -13,7 +13,10 @@ public class JwtConfig {
 
     public String secretKey = "ProblemFighterSpringBootJWT";
     public String algorithm = "HMAC256";
-    public Integer validityMinutes = 4321;
+    public String refreshTokenKey = "refreshTokenKey";
+    public String accessTokenKey = "accessTokenKey";
+    public Integer accessTokenValidityMinutes = 4320;
+    public Integer refreshTokenValidityMinutes = 4500;
 
     public JwtConfig() {}
 
@@ -37,11 +40,35 @@ public class JwtConfig {
         this.algorithm = algorithm;
     }
 
-    public Integer getValidityMinutes() {
-        return validityMinutes;
+    public String getRefreshTokenKey() {
+        return refreshTokenKey;
     }
 
-    public void setValidityMinutes(Integer validityMinutes) {
-        this.validityMinutes = validityMinutes;
+    public void setRefreshTokenKey(String refreshTokenKey) {
+        this.refreshTokenKey = refreshTokenKey;
+    }
+
+    public String getAccessTokenKey() {
+        return accessTokenKey;
+    }
+
+    public void setAccessTokenKey(String accessTokenKey) {
+        this.accessTokenKey = accessTokenKey;
+    }
+
+    public Integer getAccessTokenValidityMinutes() {
+        return accessTokenValidityMinutes;
+    }
+
+    public void setAccessTokenValidityMinutes(Integer accessTokenValidityMinutes) {
+        this.accessTokenValidityMinutes = accessTokenValidityMinutes;
+    }
+
+    public Integer getRefreshTokenValidityMinutes() {
+        return refreshTokenValidityMinutes;
+    }
+
+    public void setRefreshTokenValidityMinutes(Integer refreshTokenValidityMinutes) {
+        this.refreshTokenValidityMinutes = refreshTokenValidityMinutes;
     }
 }
