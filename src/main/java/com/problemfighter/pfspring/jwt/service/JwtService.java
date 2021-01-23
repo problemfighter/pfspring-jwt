@@ -12,14 +12,14 @@ import java.util.Map;
 @Service
 public class JwtService {
 
-    private final IJwtCallback iJwtCallback;
+    private final JwtCallbackInterface jwtCallbackInterface;
     private final JwtConfig jwtConfig;
     private final JwtProcessor jwtProcessor;
     public final String vKey = "vKey";
 
     @Autowired
-    public JwtService(IJwtCallback iJwtCallback, JwtConfig jwtConfig) {
-        this.iJwtCallback = iJwtCallback;
+    public JwtService(JwtCallbackInterface jwtCallbackInterface, JwtConfig jwtConfig) {
+        this.jwtCallbackInterface = jwtCallbackInterface;
         this.jwtConfig = jwtConfig;
         this.jwtProcessor = new JwtProcessor(this.jwtConfig.secretKey, this.jwtConfig.algorithm);
     }
@@ -49,17 +49,25 @@ public class JwtService {
     }
 
     public String getRefreshToken() {
-        iJwtCallback.onRefreshTokenCreate(this);
-        setClaim(vKey, jwtConfig.refreshTokenKey);
         jwtProcessor.setExpiration(jwtConfig.refreshTokenValidityMinutes);
+        return this.getUnlimitedRefreshToken();
+    }
+
+    public String getUnlimitedRefreshToken(){
+        jwtCallbackInterface.onRefreshTokenCreate(this);
+        setClaim(vKey, jwtConfig.refreshTokenKey);
+        return this.jwtProcessor.getToken();
+    }
+
+    public String getUnlimitedAccessToken(){
+        jwtCallbackInterface.onCreate(this);
+        setClaim(vKey, jwtConfig.accessTokenKey);
         return this.jwtProcessor.getToken();
     }
 
     public String getAccessToken() {
-        iJwtCallback.onCreate(this);
-        setClaim(vKey, jwtConfig.accessTokenKey);
         jwtProcessor.setExpiration(jwtConfig.accessTokenValidityMinutes);
-        return this.jwtProcessor.getToken();
+        return this.getUnlimitedAccessToken();
     }
 
     private JwtValidationResponse validateAccessRefreshToken(String token, String message, String pVKey) {
@@ -73,13 +81,13 @@ public class JwtService {
     }
 
     public JwtValidationResponse validateRefreshToken(String token) {
-        iJwtCallback.refreshTokenPreValidate(this);
+        jwtCallbackInterface.refreshTokenPreValidate(this);
         String message = "Invalid Refresh Token";
         return validateAccessRefreshToken(token, message, jwtConfig.refreshTokenKey);
     }
 
     public JwtValidationResponse validateAccessToken(String token) {
-        iJwtCallback.preValidate(this);
+        jwtCallbackInterface.preValidate(this);
         String message = "Invalid Access Token";
         return validateAccessRefreshToken(token, message, jwtConfig.accessTokenKey);
     }
