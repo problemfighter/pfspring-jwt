@@ -1,4 +1,4 @@
-package com.problemfighter.pfspring.jwt.processor;
+package com.problemfighter.pfspring.jwt.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

@@ -3,7 +3,7 @@ package com.problemfighter.pfspring.jwt.service;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.problemfighter.pfspring.jwt.model.data.JwtValidationResponse;
 import com.problemfighter.pfspring.jwt.processor.JWTException;
-import com.problemfighter.pfspring.jwt.processor.JwtConfig;
+import com.problemfighter.pfspring.jwt.config.JwtConfig;
 import com.problemfighter.pfspring.jwt.processor.JwtProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
