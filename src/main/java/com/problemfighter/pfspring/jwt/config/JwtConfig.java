@@ -13,6 +13,7 @@ public class JwtConfig {
 
     public String secretKey = "ProblemFighterSpringBootJWT";
     public String algorithm = "HMAC256";
+    public String tokenPrefix = "Bearer";
     public String refreshTokenKey = "refreshTokenKey";
     public String accessTokenKey = "accessTokenKey";
     public Integer accessTokenValidityMinutes = 4320;
@@ -70,5 +71,13 @@ public class JwtConfig {
 
     public void setRefreshTokenValidityMinutes(Integer refreshTokenValidityMinutes) {
         this.refreshTokenValidityMinutes = refreshTokenValidityMinutes;
+    }
+
+    public String getTokenPrefix() {
+        return tokenPrefix;
+    }
+
+    public void setTokenPrefix(String tokenPrefix) {
+        this.tokenPrefix = tokenPrefix;
     }
 }
